@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Artbook - Toko Buku Gambar Terlengkap</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        shopee: {
+                            DEFAULT: '#EE4D2D',
+                            dark: '#d73211',
+                            light: '#f05d40',
+                            orange: '#f53d2d',
+                            bg: '#f5f5f5'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for better visual */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #EE4D2D;
+            border-radius: 3px;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 antialiased min-h-screen flex flex-col pb-16 md:pb-0">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app" class="flex-1 flex flex-col">
+
+        <!-- HEADER / NAVBAR (Shown when logged in and on shop views) -->
+        <header id="main-header" class="bg-gradient-to-r from-shopee to-shopee-orange text-white sticky top-0 z-40 shadow-md">
+            <!-- Top mini header -->
+            <div class="max-w-6xl mx-auto px-4 py-1 flex justify-between items-center text-xs border-b border-orange-400/40">
+                <div class="flex items-center gap-4">
+                    <span class="hover:underline cursor-pointer"><i class="fa-solid fa-store mr-1"></i> Mitra Animal Artbook</span>
+                    <span class="hover:underline cursor-pointer"><i class="fa-solid fa-mobile-screen mr-1"></i> Download App</span>
+                </div>
+                <div class="flex items-center gap-3" id="header-auth-status">
+                    <!-- Auth user snippet inserted dynamically -->
+                </div>
+            </div>
+
+            <!-- Main Search Header -->
+            <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+                <!-- Logo -->
+                <div onclick="navigateTo('home')" class="cursor-pointer flex items-center gap-2 flex-shrink-0">
+                    <div class="bg-white text-shopee p-2 rounded-lg shadow font-black text-xl flex items-center justify-center">
+                        <i class="fa-solid fa-book-open text-2xl"></i>
+                    </div>
+                    <div class="hidden sm:block">
+                        <h1 class="text-xl font-bold tracking-tight leading-none">Animal Artbook</h1>
+                        <span class="text-[10px] tracking-wider uppercase text-orange-100">Buku Gambar Digital & Cetak</span>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-2xl relative">
+                    <div class="flex bg-white rounded-sm overflow-hidden p-1 shadow-sm">
+                        <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="Cari buku gambar hewan, kendaraan, tumbuhan..." 
+                            class="w-full px-3 py-1.5 text-gray-800 focus:outline-none text-sm">
+                        <button onclick="triggerSearch()" class="bg-shopee hover:bg-shopee-dark text-white px-5 py-1.5 rounded-sm transition">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Header Action Buttons -->
+                <div class="flex items-center gap-4 text-white">
+                    <!-- Cart -->
+                    <button onclick="navigateTo('cart')" class="relative p-2 hover:bg-orange-600/30 rounded-full transition">
+                        <i class="fa-solid fa-cart-shopping text-xl"></i>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 bg-yellow-400 text-shopee font-bold text-xs w-5 h-5 rounded-full flex items-center justify-center border-2 border-shopee">0</span>
+                    </button>
+
+                    <!-- Notifications -->
+                    <button onclick="navigateTo('notifications')" class="relative p-2 hover:bg-orange-600/30 rounded-full transition hidden sm:block">
+                        <i class="fa-solid fa-bell text-xl"></i>
+                        <span id="notif-badge" class="absolute -top-1 -right-1 bg-yellow-400 text-shopee font-bold text-xs w-4 h-4 rounded-full flex items-center justify-center border-2 border-shopee">2</span>
+                    </button>
+
+                    <!-- Chat Admin -->
+                    <button onclick="openChatAdmin()" class="relative p-2 hover:bg-orange-600/30 rounded-full transition hidden sm:block">
+                        <i class="fa-solid fa-comments text-xl"></i>
+                        <span class="text-xs bg-green-500 text-white rounded-full px-1.5 py-0.5 absolute -top-1 -right-2">CS</span>
+                    </button>
+
+                    <!-- Switch to Admin View Button -->
+                    <button id="btn-switch-admin" onclick="navigateTo('admin')" class="bg-gray-900/80 hover:bg-black text-white text-xs px-3 py-1.5 rounded-full border border-orange-300/40 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-user-shield text-yellow-400"></i> Mode Admin
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- VIEW CONTAINERS -->
+        <main class="flex-1 max-w-6xl w-full mx-auto p-3 sm:p-4">
+
+            <!-- 1. AUTH PAGE (LOGIN & REGISTER) -->
+            <section id="view-auth" class="view-section hidden my-6">
+                <div class="max-w-md mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100">
+                    <div class="text-center mb-6">
+                        <div class="inline-block p-3 bg-orange-100 text-shopee rounded-full mb-2">
+                            <i class="fa-solid fa-book-open text-3xl"></i>
+                        </div>
+                        <h2 id="auth-title" class="text-2xl font-bold text-gray-800">Masuk Akun</h2>
+                        <p id="auth-subtitle" class="text-xs text-gray-500 mt-1">Selamat datang kembali di Animal Artbook</p>
+                    </div>
+
+                    <!-- Auth Tabs -->
+                    <div class="flex border-b border-gray-200 mb-6">
+                        <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2 font-semibold text-center border-b-2 border-shopee text-shopee">Masuk</button>
+                        <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2 font-semibold text-center border-b-2 border-transparent text-gray-400 hover:text-gray-600">Daftar Baru</button>
+                    </div>
+
+                    <!-- FORM -->
+                    <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+                        <div id="register-fields" class="hidden space-y-3 mb-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Lengkap</label>
+                                <input type="text" id="reg-fullname" class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-shopee focus:border-shopee text-sm" placeholder="Sesuai KTP">
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Username / Email</label>
+                                <input type="text" id="auth-username" required class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-shopee focus:border-shopee text-sm" placeholder="Masukkan username">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Kata Sandi</label>
+                                <input type="password" id="auth-password" required class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-shopee focus:border-shopee text-sm" placeholder="••••••••">
+                            </div>
+                        </div>
+
+                        <button type="submit" id="auth-submit-btn" class="w-full mt-6 bg-shopee hover:bg-shopee-dark text-white font-bold py-2.5 rounded shadow transition duration-200 uppercase tracking-wider text-sm">
+                            Masuk
+                        </button>
+                    </form>
+
+                    <div class="mt-4 text-center text-xs text-gray-500">
+                        <p>Demo Admin Login: <span class="font-mono bg-gray-100 px-1 py-0.5 rounded text-shopee">admin / admin123</span></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. DATA DIRI & SELFIE VERIFICATION PAGE -->
+            <section id="view-profile-setup" class="view-section hidden my-4">
+                <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <div class="border-b border-gray-100 pb-4 mb-4 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">Lengkapi Data Diri Konsumen</h2>
+                            <p class="text-xs text-gray-500">Diperlukan untuk verifikasi pengiriman dan lokasi COD.</p>
+                        </div>
+                        <span class="bg-orange-100 text-shopee text-xs px-2.5 py-1 rounded-full font-semibold">Langkah 2/2</span>
+                    </div>
+
+                    <form onsubmit="handleProfileSetupSubmit(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Tempat Lahir</label>
+                                <input type="text" id="setup-pob" required class="w-full px-3 py-2 border rounded text-sm focus:border-shopee focus:ring-shopee" placeholder="Kota Kelahiran">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Tanggal Lahir</label>
+                                <input type="date" id="setup-dob" required class="w-full px-3 py-2 border rounded text-sm focus:border-shopee focus:ring-shopee">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Nomor Whatsapp / HP Active</label>
+                            <input type="tel" id="setup-phone" required class="w-full px-3 py-2 border rounded text-sm focus:border-shopee focus:ring-shopee" placeholder="Contoh: 081371236782">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Alamat Lengkap Pengiriman</label>
+                            <textarea id="setup-address" rows="3" required class="w-full px-3 py-2 border rounded text-sm focus:border-shopee focus:ring-shopee" placeholder="Nama Jalan, No. Rumah, RT/RW, Kec, Kota, Kode Pos..."></textarea>
+                        </div>
+
+                        <!-- Face Verification / Selfie Simulation -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 text-center">
+                            <label class="block text-xs font-bold text-gray-700 mb-1"><i class="fa-solid fa-camera text-shopee mr-1"></i> Penyesuaian Wajah / Foto Verifikasi (Selfie)</label>
+                            <p class="text-[11px] text-gray-500 mb-3">Upload foto wajah Anda atau gunakan kamera langsung untuk keamanan akun.</p>
+                            
+                            <div class="flex flex-col items-center justify-center gap-3">
+                                <div id="face-preview-box" class="w-28 h-28 rounded-full border-2 border-shopee bg-gray-200 flex items-center justify-center overflow-hidden relative shadow-inner">
+                                    <i id="face-placeholder-icon" class="fa-solid fa-user-circle text-5xl text-gray-400"></i>
+                                    <img id="face-preview-img" class="w-full h-full object-cover hidden" alt="Selfie Preview">
+                                </div>
+                                <div class="flex gap-2">
+                                    <label for="setup-face-file" class="bg-white border border-gray-300 hover:border-shopee text-gray-700 px-3 py-1.5 rounded text-xs cursor-pointer shadow-sm transition">
+                                        <i class="fa-solid fa-upload mr-1"></i> Pilih Foto
+                                    </label>
+                                    <input type="file" id="setup-face-file" accept="image/*" class="hidden" onchange="previewFaceImage(this)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-shopee hover:bg-shopee-dark text-white font-bold py-3 rounded shadow transition uppercase text-sm tracking-wider">
+                            Simpan & Lanjutkan Belanja
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 3. HOME VIEW (SHOPEE CATALOG) -->
+            <section id="view-home" class="view-section space-y-4">
+                
+                <!-- Banners / Promotional Header Carousel Simulation -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="md:col-span-2 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg p-6 text-white flex flex-col justify-between shadow-sm relative overflow-hidden min-h-[160px]">
+                        <div class="z-10">
+                            <span class="bg-yellow-400 text-red-900 font-extrabold text-[10px] px-2 py-0.5 rounded tracking-wide uppercase">Promo Spesial</span>
+                            <h2 class="text-2xl font-black mt-2">Buku Gambar Digital "Animal Artbook"</h2>
+                            <p class="text-xs text-orange-100 mt-1 max-w-sm">Koleksi sketsa hewan, kendaraan, & tumbuhan siap cetak dan diwarnai! Pengiriman instan via WhatsApp.</p>
+                        </div>
+                        <div class="z-10 mt-4">
+                            <button onclick="scrollToProducts()" class="bg-white text-shopee font-bold px-4 py-1.5 rounded-full text-xs shadow hover:bg-orange-50 transition">Beli Sekarang</button>
+                        </div>
+                        <i class="fa-solid fa-palette absolute -right-4 -bottom-4 text-9xl text-white/10 pointer-events-none"></i>
+                    </div>
+
+                    <div class="hidden md:flex flex-col gap-3">
+                        <div class="flex-1 bg-yellow-500 rounded-lg p-3 text-white flex items-center justify-between shadow-sm">
+                            <div>
+                                <p class="text-xs font-bold uppercase">Bayar via DANA</p>
+                                <p class="text-lg font-extrabold">081371236782</p>
+                                <span class="text-[10px] bg-black/20 px-1.5 py-0.5 rounded">Proses Cepat</span>
+                            </div>
+                            <i class="fa-solid fa-wallet text-3xl opacity-80"></i>
+                        </div>
+                        <div class="flex-1 bg-teal-600 rounded-lg p-3 text-white flex items-center justify-between shadow-sm">
+                            <div>
+                                <p class="text-xs font-bold uppercase">Layanan COD</p>
+                                <p class="text-xs">Bayar di Tempat dengan lokasi pas</p>
+                            </div>
+                            <i class="fa-solid fa-truck-fast text-3xl opacity-80"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CATEGORIES BAR (Shopee Style Grid) -->
+                <div id="product-section" class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-shopee"></i> Kategori Produk
+                    </h3>
+                    <div class="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar" id="category-pills">
+                        <!-- Dynamic Pills generated by JS -->
+                    </div>
+                </div>
+
+                <!-- PRODUCT GRID -->
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-gray-800 text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-fire text-shopee"></i> Rekomendasi Produk
+                        </h3>
+                        <span id="product-count" class="text-xs text-gray-500">Menampilkan 0 produk</span>
+                    </div>
+
+                    <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                        <!-- Dynamic Product Cards Injected Here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. PRODUCT DETAIL MODAL / VIEW -->
+            <section id="view-product-detail" class="view-section hidden my-2">
+                <button onclick="navigateTo('home')" class="mb-3 text-xs text-shopee font-semibold flex items-center gap-1 hover:underline">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Katalog
+                </button>
+                <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden" id="product-detail-container">
+                    <!-- Dynamic Product Detail Loaded Here -->
+                </div>
+            </section>
+
+            <!-- 5. CART VIEW -->
+            <section id="view-cart" class="view-section hidden my-2">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-cart-shopping text-shopee"></i> Keranjang Belanja
+                </h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <!-- Cart Items List -->
+                    <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                        <div id="cart-items-list" class="space-y-4">
+                            <!-- Injected Cart Items -->
+                        </div>
+                    </div>
+
+                    <!-- Cart Summary / Checkout -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-fit space-y-4">
+                        <h3 class="font-bold text-gray-800 border-b pb-2">Ringkasan Pesanan</h3>
+                        
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between text-gray-600">
+                                <span>Total Harga Items</span>
+                                <span id="cart-subtotal" class="font-semibold">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>Ongkos Kirim (Digital / COD)</span>
+                                <span class="text-green-600 font-semibold">GRATIS / Terjangkau</span>
+                            </div>
+                            <div class="border-t pt-2 flex justify-between font-bold text-base text-gray-800">
+                                <span>Total Pembayaran</span>
+                                <span id="cart-total" class="text-shopee font-black text-lg">Rp 0</span>
+                            </div>
+                        </div>
+
+                        <!-- Choose Payment Method -->
+                        <div class="border-t pt-3 space-y-2">
+                            <label class="block text-xs font-bold text-gray-700">Metode Pembayaran:</label>
+                            <div class="space-y-1.5">
+                                <label class="flex items-center gap-2 border p-2.5 rounded cursor-pointer hover:border-shopee">
+                                    <input type="radio" name="pay-method" value="DANA" checked onchange="toggleCodAddress(false)" class="text-shopee focus:ring-shopee">
+                                    <div class="text-xs">
+                                        <span class="font-bold text-blue-600">DANA</span> (081371236782)
+                                        <p class="text-[10px] text-gray-500">File langsung dikirim via WhatsApp</p>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-2 border p-2.5 rounded cursor-pointer hover:border-shopee">
+                                    <input type="radio" name="pay-method" value="COD" onchange="toggleCodAddress(true)" class="text-shopee focus:ring-shopee">
+                                    <div class="text-xs">
+                                        <span class="font-bold text-teal-700">COD (Cash on Delivery)</span>
+                                        <p class="text-[10px] text-gray-500">Bayar saat file/buku fisik sampai</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- COD Delivery Notes -->
+                        <div id="cod-notes" class="hidden bg-orange-50 p-2.5 rounded border border-orange-200 text-xs text-gray-700">
+                            <p class="font-semibold text-shopee mb-1"><i class="fa-solid fa-location-dot"></i> Lokasi Pengantaran COD:</p>
+                            <p id="cod-address-display" class="italic text-[11px] text-gray-600">Alamat belum diatur</p>
+                        </div>
+
+                        <button onclick="processCheckout()" class="w-full bg-shopee hover:bg-shopee-dark text-white font-bold py-3 rounded text-sm uppercase tracking-wider transition shadow">
+                            Checkout Sekarang
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. NOTIFICATIONS VIEW -->
+            <section id="view-notifications" class="view-section hidden my-2 max-w-2xl mx-auto">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-bell text-shopee"></i> Notifikasi & Status Pesanan
+                    </h2>
+                    <div id="notif-list" class="space-y-3">
+                        <!-- Injected Notifications -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. ACCOUNT / PROFILE VIEW -->
+            <section id="view-account" class="view-section hidden my-2 max-w-3xl mx-auto">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <!-- Profile Header Banner -->
+                    <div class="bg-gradient-to-r from-shopee to-shopee-orange p-6 text-white flex flex-col sm:flex-row items-center gap-4">
+                        <div class="relative group">
+                            <img id="user-avatar" src="https://placehold.co/120x120/EE4D2D/ffffff?text=User" class="w-20 h-20 rounded-full border-2 border-white object-cover shadow" alt="Foto Profil">
+                            <label for="upload-avatar-input" class="absolute bottom-0 right-0 bg-white text-gray-700 p-1.5 rounded-full shadow hover:bg-gray-100 cursor-pointer text-xs">
+                                <i class="fa-solid fa-camera text-shopee"></i>
+                            </label>
+                            <input type="file" id="upload-avatar-input" accept="image/*" class="hidden" onchange="changeProfileAvatar(this)">
+                        </div>
+                        <div class="text-center sm:text-left flex-1">
+                            <h3 id="profile-name" class="text-xl font-bold">Nama Pengguna</h3>
+                            <p id="profile-username" class="text-xs text-orange-200">@username</p>
+                            <span class="inline-block mt-2 bg-yellow-400 text-shopee font-bold text-[10px] px-2 py-0.5 rounded-full uppercase">Member Gold</span>
+                        </div>
+                    </div>
+
+                    <!-- Profile Details -->
+                    <div class="p-6 space-y-4">
+                        <h4 class="font-bold text-gray-700 border-b pb-2 text-sm uppercase tracking-wide">Data Diri Terdaftar</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-500 text-xs block">Tempat, Tanggal Lahir</span>
+                                <span id="profile-ttl" class="font-semibold text-gray-800">-</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 text-xs block">Nomor WhatsApp / HP</span>
+                                <span id="profile-phone" class="font-semibold text-gray-800">-</span>
+                            </div>
+                            <div class="md:col-span-2">
+                                <span class="text-gray-500 text-xs block">Alamat Pengiriman (Lokasi COD)</span>
+                                <span id="profile-address" class="font-semibold text-gray-800">-</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 text-xs block">Status Verifikasi Wajah (Selfie)</span>
+                                <span id="profile-face-status" class="inline-flex items-center text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded">
+                                    <i class="fa-solid fa-circle-check mr-1"></i> Terverifikasi
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="pt-4 border-t flex flex-wrap gap-3">
+                            <button onclick="navigateTo('profile-setup')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs px-4 py-2 rounded transition">
+                                <i class="fa-solid fa-pen mr-1"></i> Edit Data Diri
+                            </button>
+                            <button onclick="handleLogout()" class="bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs px-4 py-2 rounded transition ml-auto">
+                                <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar / Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. ADMIN DASHBOARD VIEW -->
+            <section id="view-admin" class="view-section hidden my-2 space-y-6">
+                <!-- Admin Header -->
+                <div class="bg-gray-900 text-white p-4 rounded-lg flex justify-between items-center shadow">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-yellow-500 text-gray-900 rounded-lg">
+                            <i class="fa-solid fa-user-shield text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold">Dashboard Admin Animal Artbook</h2>
+                            <p class="text-xs text-gray-400">Kelola Produk, Penjualan, & Data Pembeli</p>
+                        </div>
+                    </div>
+                    <button onclick="navigateTo('home')" class="bg-shopee hover:bg-shopee-dark text-white text-xs px-3 py-1.5 rounded font-bold transition">
+                        <i class="fa-solid fa-store mr-1"></i> Ke Tampilan Toko
+                    </button>
+                </div>
+
+                <!-- Admin Metrics -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase font-semibold">Total Omset</p>
+                            <p id="admin-total-revenue" class="text-xl font-black text-shopee mt-1">Rp 1.450.000</p>
+                        </div>
+                        <i class="fa-solid fa-money-bill-wave text-3xl text-green-500"></i>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase font-semibold">Pesanan Masuk</p>
+                            <p id="admin-total-orders" class="text-xl font-black text-gray-800 mt-1">12 Pesanan</p>
+                        </div>
+                        <i class="fa-solid fa-box text-3xl text-blue-500"></i>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase font-semibold">Total Produk</p>
+                            <p id="admin-total-products" class="text-xl font-black text-gray-800 mt-1">8 Buku</p>
+                        </div>
+                        <i class="fa-solid fa-book text-3xl text-orange-500"></i>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase font-semibold">Pelanggan Aktif</p>
+                            <p id="admin-total-users" class="text-xl font-black text-gray-800 mt-1">5 Konsumen</p>
+                        </div>
+                        <i class="fa-solid fa-users text-3xl text-purple-500"></i>
+                    </div>
+                </div>
+
+                <!-- Admin Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Form Tambah Produk Baru -->
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 h-fit">
+                        <h3 class="font-bold text-gray-800 border-b pb-2 mb-3 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle text-shopee"></i> Tambah Katalog Produk
+                        </h3>
+                        <form onsubmit="handleAdminAddProduct(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Judul Buku Gambar</label>
+                                <input type="text" id="add-prod-title" required class="w-full px-3 py-1.5 border rounded text-xs focus:ring-shopee focus:border-shopee" placeholder="Contoh: Seri Hewan Laut">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Kategori</label>
+                                <select id="add-prod-category" class="w-full px-3 py-1.5 border rounded text-xs focus:ring-shopee focus:border-shopee">
+                                    <option value="Hewan">Hewan</option>
+                                    <option value="Kendaraan">Kendaraan</option>
+                                    <option value="Tumbuhan">Tumbuhan</option>
+                                    <option value="Elektronik">Elektronik</option>
+                                    <option value="Lain-lain">Lain-lain</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Harga (Rp)</label>
+                                    <input type="number" id="add-prod-price" required class="w-full px-3 py-1.5 border rounded text-xs focus:ring-shopee focus:border-shopee" placeholder="25000">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Stok / Format</label>
+                                    <input type="text" id="add-prod-stock" required class="w-full px-3 py-1.5 border rounded text-xs focus:ring-shopee focus:border-shopee" placeholder="Digital / 50 Pcs">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">URL Gambar (Bisa Placeholder)</label>
+                                <input type="text" id="add-prod-image" class="w-full px-3 py-1.5 border rounded text-xs focus:ring-shopee focus:border-shopee" placeholder="https://placehold.co/300x300/EE4D2D/ffffff?text=Artbook">
+                                <p class="text-[10px] text-gray-400 mt-0.5">Catatan: Anda dapat mengganti gambar ini nanti langsung di VSCode pada array `initialProducts`.</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Deskripsi Singkat</label>
+                                <textarea id="add-prod-desc" rows="2" class="w-full px-3 py-1.5 border rounded text-xs focus:ring-shopee focus:border-shopee" placeholder="Isi halaman sketsa artbook..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-shopee hover:bg-shopee-dark text-white font-bold py-2 rounded text-xs uppercase transition shadow">
+                                Simpan Produk
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- List Katalog Produk & Pesanan Masuk -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Daftar Produk -->
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="font-bold text-gray-800 border-b pb-2 mb-3 text-sm flex items-center justify-between">
+                                <span><i class="fa-solid fa-list text-shopee mr-1"></i> Katalog Produk Aktif</span>
+                                <span class="text-xs text-gray-400 font-normal">Sistem VSCode Ready</span>
+                            </h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-gray-100 text-gray-600 border-b">
+                                            <th class="p-2">Gambar</th>
+                                            <th class="p-2">Judul</th>
+                                            <th class="p-2">Kategori</th>
+                                            <th class="p-2">Harga</th>
+                                            <th class="p-2 text-right">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-product-table">
+                                        <!-- Dynamic Table Rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Daftar Pembeli & Transaksi -->
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="font-bold text-gray-800 border-b pb-2 mb-3 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-users-gear text-shopee"></i> Data Pembeli / Konsumen Masuk
+                            </h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-gray-100 text-gray-600 border-b">
+                                            <th class="p-2">Konsumen</th>
+                                            <th class="p-2">WhatsApp</th>
+                                            <th class="p-2">Alamat / COD</th>
+                                            <th class="p-2">Status DANA</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-orders-table">
+                                        <!-- Injected Admin Buyers Data -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER (Shopee Style) -->
+        <footer class="bg-white border-t border-gray-200 text-gray-600 text-xs mt-auto">
+            <div class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <div>
+                    <h4 class="font-bold text-gray-800 uppercase mb-3">Layanan Pelanggan</h4>
+                    <ul class="space-y-1.5">
+                        <li><a href="#" class="hover:text-shopee">Bantuan WhatsApp</a></li>
+                        <li><a href="#" class="hover:text-shopee">Metode Pembayaran DANA</a></li>
+                        <li><a href="#" class="hover:text-shopee">Pengiriman File Otomatis</a></li>
+                        <li><a href="#" class="hover:text-shopee">Garansi Shopee Style</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 uppercase mb-3">Tentang Animal Artbook</h4>
+                    <p class="text-gray-500 leading-relaxed">Pusat penjualan buku gambar digital & cetak dengan tema lengkap: hewan, kendaraan, tumbuhan, elektronik, dan lainnya.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 uppercase mb-3">Pembayaran & Kontak</h4>
+                    <p class="font-bold text-blue-600 text-sm mb-1"><i class="fa-solid fa-wallet"></i> DANA: 081371236782</p>
+                    <p class="font-bold text-green-600 text-sm mb-2"><i class="fa-brands fa-whatsapp"></i> WA: 081371236782</p>
+                    <p class="text-[11px] text-gray-400">Pengiriman instant file gambar setelah bukti pembayaran terkonfirmasi.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 uppercase mb-3">Ikuti Kami</h4>
+                    <div class="flex gap-3 text-lg text-gray-500">
+                        <a href="#" class="hover:text-shopee"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="hover:text-shopee"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="hover:text-shopee"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-100 py-3 text-center text-gray-500 border-t">
+                <p>&copy; 2026 Animal Artbook. Powered by Shopee UI Theme Simulation.</p>
+            </div>
+        </footer>
+
+        <!-- BOTTOM MOBILE NAVIGATION BAR (Shopee App Style) -->
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex justify-around py-2 text-center text-[10px] text-gray-600 shadow-lg">
+            <button onclick="navigateTo('home')" class="flex flex-col items-center hover:text-shopee focus:text-shopee" id="nav-mob-home">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span>Beranda</span>
+            </button>
+            <button onclick="navigateTo('cart')" class="flex flex-col items-center hover:text-shopee focus:text-shopee relative" id="nav-mob-cart">
+                <i class="fa-solid fa-cart-shopping text-lg"></i>
+                <span>Keranjang</span>
+            </button>
+            <button onclick="navigateTo('notifications')" class="flex flex-col items-center hover:text-shopee focus:text-shopee relative" id="nav-mob-notif">
+                <i class="fa-solid fa-bell text-lg"></i>
+                <span>Notifikasi</span>
+            </button>
+            <button onclick="navigateTo('account')" class="flex flex-col items-center hover:text-shopee focus:text-shopee" id="nav-mob-account">
+                <i class="fa-solid fa-user text-lg"></i>
+                <span>Saya</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ==========================================================================
+           1. INITIAL STATE & MOCK DATA (VSCODE READY)
+           ========================================================================== */
+        const DANA_NUMBER = "081371236782";
+        const WHATSAPP_NUMBER = "081371236782";
+
+        // Categories specified in prompt
+        const categories = ["Semua Produk", "Hewan", "Kendaraan", "Tumbuhan", "Elektronik", "Lain-lain"];
+        let currentCategory = "Semua Produk";
+
+        // Products database - Easy to replace image links in VSCode
+        let products = JSON.parse(localStorage.getItem('animal_artbook_products')) || [
+            {
+                id: 1,
+                title: "Buku Gambar Seri Satwa Hutan",
+                category: "Hewan",
+                price: 25000,
+                rating: 4.9,
+                sold: 1420,
+                image: "foto/bus.jpeg",
+                description: "Koleksi 50+ sketsa gambar hewan hutan, harimau, gajah, dan burung. Format digital siap cetak HD."
+            },
+            {
+                id: 2,
+                title: "Sketsa Kendaraan Supercar & Truk",
+                category: "Kendaraan",
+                price: 30000,
+                rating: 4.8,
+                sold: 890,
+                image: "https://placehold.co/400x400/2563eb/ffffff?text=Artbook+Kendaraan",
+                description: "Buku mewarnai dan pola gambar berbagai jenis mobil balap, sepeda motor, dan armada transportasi."
+            },
+            {
+                id: 3,
+                title: "Flora & Tumbuhan Tropis Artbook",
+                category: "Tumbuhan",
+                price: 20000,
+                rating: 4.7,
+                sold: 530,
+                image: "https://placehold.co/400x400/16a34a/ffffff?text=Artbook+Tumbuhan",
+                description: "Panduan mewarnai bunga eksotis, pohon rindang, dan tanaman hias rumah tangga."
+            },
+            {
+                id: 4,
+                title: "Elektronik & Gadget Futuristic Sketch",
+                category: "Elektronik",
+                price: 35000,
+                rating: 5.0,
+                sold: 310,
+                image: "https://placehold.co/400x400/9333ea/ffffff?text=Artbook+Elektronik",
+                description: "Sketsa detail komponen elektronik, robotika, laptop, dan perlengkapan teknologi terkini."
+            },
+            {
+                id: 5,
+                title: "Buku Gambar Dinosaurus Purba",
+                category: "Hewan",
+                price: 28000,
+                rating: 4.9,
+                sold: 2100,
+                image: "https://placehold.co/400x400/ea580c/ffffff?text=Artbook+Dino",
+                description: "Edisi spesial makhluk purba T-Rex, Pterodactyl, dan Triceratops dengan outline garis tegas."
+            },
+            {
+                id: 6,
+                title: "Pesawat Terbang & Roket Luar Angkasa",
+                category: "Kendaraan",
+                price: 27000,
+                rating: 4.8,
+                sold: 410,
+                image: "https://placehold.co/400x400/0284c7/ffffff?text=Artbook+Roket",
+                description: "Inspirasi melukis pesawat jet tempur, helikopter, dan roket antariksa."
+            },
+            {
+                id: 7,
+                title: "Ragam Kartun Lucu & Karakter",
+                category: "Lain-lain",
+                price: 18000,
+                rating: 4.6,
+                sold: 950,
+                image: "https://placehold.co/400x400/db2777/ffffff?text=Artbook+Kartun",
+                description: "Buku mewarnai karakter kartun seru cocok untuk melatih kreativitas anak-anak."
+            }
+        ];
+
+        // State Store
+        let currentUser = JSON.parse(localStorage.getItem('animal_artbook_user')) || null;
+        let registeredUsers = JSON.parse(localStorage.getItem('animal_artbook_users_db')) || [];
+        let cart = JSON.parse(localStorage.getItem('animal_artbook_cart')) || [];
+        let notifications = JSON.parse(localStorage.getItem('animal_artbook_notifs')) || [
+            { id: 1, title: "Selamat Datang!", body: "Dapatkan promo buku gambar Hewan via WhatsApp.", time: "Baru saja" },
+            { id: 2, title: "Pembayaran DANA", body: "Konfirmasi pesanan mudah melalui WA 081371236782.", time: "1 jam lalu" }
+        ];
+
+        /* ==========================================================================
+           2. NAVIGATION & VIEW CONTROLLER
+           ========================================================================== */
+        function navigateTo(viewName) {
+            // Guard: If not logged in and accessing protected pages
+            if (!currentUser && viewName !== 'auth') {
+                showToast("Silakan login atau daftar terlebih dahulu!", "warning");
+                renderAuthPage('login');
+                showView('auth');
+                return;
+            }
+
+            // Guard: Check if profile is setup
+            if (currentUser && !currentUser.isProfileComplete && viewName !== 'profile-setup' && viewName !== 'auth') {
+                showToast("Mohon lengkapi data diri Anda lebih dulu.", "info");
+                showView('profile-setup');
+                return;
+            }
+
+            showView(viewName);
+
+            // Specific View Renders
+            if (viewName === 'home') renderHomeCatalog();
+            if (viewName === 'cart') renderCart();
+            if (viewName === 'account') renderAccount();
+            if (viewName === 'notifications') renderNotifications();
+            if (viewName === 'admin') renderAdminDashboard();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById(`view-${viewId}`);
+            if (target) target.classList.remove('hidden');
+
+            // Header visibility
+            const header = document.getElementById('main-header');
+            if (viewId === 'auth' || viewId === 'profile-setup') {
+                header.classList.add('hidden');
+            } else {
+                header.classList.remove('hidden');
+                updateHeaderUserSnippet();
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bg = type === 'error' ? 'bg-red-600' : type === 'success' ? 'bg-green-600' : type === 'warning' ? 'bg-yellow-500' : 'bg-gray-800';
+            
+            toast.className = `${bg} text-white px-4 py-2.5 rounded shadow-lg text-xs font-medium flex items-center justify-between gap-3 pointer-events-auto transition duration-300 transform translate-y-2`;
+            toast.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" class="text-white/80 hover:text-white">&times;</button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        /* ==========================================================================
+           3. AUTHENTICATION & PROFILE DATA SYSTEM
+           ========================================================================== */
+        let authMode = 'login';
+
+        function switchAuthTab(mode) {
+            authMode = mode;
+            const regFields = document.getElementById('register-fields');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+            const authTitle = document.getElementById('auth-title');
+
+            if (mode === 'register') {
+                regFields.classList.remove('hidden');
+                submitBtn.innerText = "Daftar Akun";
+                authTitle.innerText = "Pendaftaran Baru";
+                tabRegister.className = "flex-1 py-2 font-semibold text-center border-b-2 border-shopee text-shopee";
+                tabLogin.className = "flex-1 py-2 font-semibold text-center border-b-2 border-transparent text-gray-400 hover:text-gray-600";
+            } else {
+                regFields.classList.add('hidden');
+                submitBtn.innerText = "Masuk";
+                authTitle.innerText = "Masuk Akun";
+                tabLogin.className = "flex-1 py-2 font-semibold text-center border-b-2 border-shopee text-shopee";
+                tabRegister.className = "flex-1 py-2 font-semibold text-center border-b-2 border-transparent text-gray-400 hover:text-gray-600";
+            }
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('auth-username').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+
+            if (authMode === 'register') {
+                const fullname = document.getElementById('reg-fullname').value.trim();
+                
+                // Check existing
+                const exists = registeredUsers.some(u => u.username.toLowerCase() === username.toLowerCase());
+                if (exists) {
+                    showToast("Username sudah digunakan!", "error");
+                    return;
+                }
+
+                const newUser = {
+                    id: Date.now(),
+                    username,
+                    password,
+                    fullname,
+                    avatar: 'https://placehold.co/120x120/EE4D2D/ffffff?text=' + username.substring(0, 2).toUpperCase(),
+                    isProfileComplete: false,
+                    pob: '',
+                    dob: '',
+                    phone: '',
+                    address: '',
+                    facePhoto: ''
+                };
+
+                registeredUsers.push(newUser);
+                localStorage.setItem('animal_artbook_users_db', JSON.stringify(registeredUsers));
+
+                currentUser = newUser;
+                saveCurrentUser();
+                showToast("Pendaftaran berhasil! Lanjutkan pengisian data diri.", "success");
+                navigateTo('profile-setup');
+
+            } else {
+                // Login logic validation
+                if (username === 'admin' && password === 'admin123') {
+                    currentUser = { username: 'admin', fullname: 'Administrator Toko', role: 'admin', isProfileComplete: true };
+                    saveCurrentUser();
+                    showToast("Login Admin Berhasil!", "success");
+                    navigateTo('admin');
+                    return;
+                }
+
+                const found = registeredUsers.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
+                
+                if (!found) {
+                    showToast("Gagal Login: Username atau Kata Sandi tidak sesuai!", "error");
+                    return;
+                }
+
+                currentUser = found;
+                saveCurrentUser();
+                showToast(`Selamat datang kembali, ${currentUser.fullname || currentUser.username}!`, "success");
+                
+                if (!currentUser.isProfileComplete) {
+                    navigateTo('profile-setup');
+                } else {
+                    navigateTo('home');
+                }
+            }
+        }
+
+        function renderAuthPage(defaultMode = 'login') {
+            document.getElementById('auth-form').reset();
+            switchAuthTab(defaultMode);
+        }
+
+        function handleProfileSetupSubmit(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            currentUser.pob = document.getElementById('setup-pob').value;
+            currentUser.dob = document.getElementById('setup-dob').value;
+            currentUser.phone = document.getElementById('setup-phone').value;
+            currentUser.address = document.getElementById('setup-address').value;
+            currentUser.isProfileComplete = true;
+
+            // Sync back to db
+            const idx = registeredUsers.findIndex(u => u.username === currentUser.username);
+            if (idx !== -1) registeredUsers[idx] = currentUser;
+
+            localStorage.setItem('animal_artbook_users_db', JSON.stringify(registeredUsers));
+            saveCurrentUser();
+
+            showToast("Data Diri & Verifikasi Wajah Berhasil Disimpan!", "success");
+            navigateTo('home');
+        }
+
+        function previewFaceImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('face-preview-img').src = e.target.result;
+                    document.getElementById('face-preview-img').classList.remove('hidden');
+                    document.getElementById('face-placeholder-icon').classList.add('hidden');
+                    if (currentUser) currentUser.facePhoto = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function changeProfileAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('user-avatar').src = e.target.result;
+                    if (currentUser) {
+                        currentUser.avatar = e.target.result;
+                        saveCurrentUser();
+                        showToast("Foto Profil Berhasil Diperbarui!", "success");
+                    }
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function saveCurrentUser() {
+            localStorage.setItem('animal_artbook_user', JSON.stringify(currentUser));
+            updateHeaderUserSnippet();
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('animal_artbook_user');
+            showToast("Anda telah keluar dari akun.", "info");
+            navigateTo('auth');
+        }
+
+        function updateHeaderUserSnippet() {
+            const container = document.getElementById('header-auth-status');
+            if (currentUser) {
+                container.innerHTML = `
+                    <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('account')">
+                        <img src="${currentUser.avatar || 'https://placehold.co/50'}" class="w-5 h-5 rounded-full object-cover border border-white">
+                        <span class="font-semibold">${currentUser.fullname || currentUser.username}</span>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <a onclick="navigateTo('auth')" class="hover:underline cursor-pointer">Masuk / Daftar</a>
+                `;
+            }
+            updateCartBadge();
+        }
+
+        /* ==========================================================================
+           4. PRODUCT CATALOG & SEARCH
+           ========================================================================== */
+        function renderHomeCatalog() {
+            renderCategoryPills();
+            renderProductGrid();
+        }
+
+        function renderCategoryPills() {
+            const container = document.getElementById('category-pills');
+            container.innerHTML = categories.map(cat => {
+                const active = cat === currentCategory;
+                return `
+                    <button onclick="selectCategory('${cat}')" class="px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+                        active 
+                        ? 'bg-shopee text-white shadow-sm' 
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }">
+                        ${cat}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectCategory(cat) {
+            currentCategory = cat;
+            renderCategoryPills();
+            renderProductGrid();
+        }
+
+        function renderProductGrid(filterQuery = "") {
+            const grid = document.getElementById('product-grid');
+            let filtered = products;
+
+            if (currentCategory !== "Semua Produk") {
+                filtered = filtered.filter(p => p.category === currentCategory);
+            }
+
+            if (filterQuery.trim() !== "") {
+                const q = filterQuery.toLowerCase();
+                filtered = filtered.filter(p => p.title.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+            }
+
+            document.getElementById('product-count').innerText = `Menampilkan ${filtered.length} produk`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-gray-400">
+                        <i class="fa-solid fa-box-open text-4xl mb-2"></i>
+                        <p class="text-sm">Produk tidak ditemukan dalam kategori ini.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(product => `
+                <div onclick="viewProductDetail(${product.id})" class="bg-white rounded border border-gray-200 hover:border-shopee hover:shadow-md transition cursor-pointer flex flex-col justify-between overflow-hidden group">
+                    <div>
+                        <div class="relative aspect-square overflow-hidden bg-gray-100">
+                            <img src="${product.image}" alt="${product.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <span class="absolute top-1 left-1 bg-shopee text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                                ${product.category}
+                            </span>
+                        </div>
+                        <div class="p-2.5">
+                            <h4 class="text-xs font-semibold text-gray-800 line-clamp-2 leading-snug mb-2 group-hover:text-shopee">${product.title}</h4>
+                            <div class="text-shopee font-bold text-sm">Rp ${product.price.toLocaleString('id-ID')}</div>
+                        </div>
+                    </div>
+                    <div class="p-2.5 pt-0 flex justify-between items-center text-[10px] text-gray-500 border-t border-gray-50 mt-1">
+                        <span class="text-yellow-500 font-bold"><i class="fa-solid fa-star text-[9px]"></i> ${product.rating}</span>
+                        <span>Terjual ${product.sold}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleSearch(e) {
+            if (e.key === 'Enter') {
+                triggerSearch();
+            }
+        }
+
+        function triggerSearch() {
+            const query = document.getElementById('search-input').value;
+            renderProductGrid(query);
+            scrollToProducts();
+        }
+
+        function scrollToProducts() {
+            const el = document.getElementById('product-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function viewProductDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const container = document.getElementById('product-detail-container');
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                    <div class="bg-gray-100 rounded-lg overflow-hidden max-h-[350px]">
+                        <img src="${product.image}" class="w-full h-full object-cover" alt="${product.title}">
+                    </div>
+                    <div class="flex flex-col justify-between space-y-4">
+                        <div>
+                            <span class="inline-block bg-orange-100 text-shopee font-semibold text-xs px-2.5 py-1 rounded mb-2">
+                                Kategori: ${product.category}
+                            </span>
+                            <h2 class="text-xl font-bold text-gray-800 mb-2">${product.title}</h2>
+                            <div class="flex items-center gap-3 text-xs text-gray-500 mb-4">
+                                <span class="text-yellow-500 font-bold"><i class="fa-solid fa-star"></i> ${product.rating}</span>
+                                <span>|</span>
+                                <span>${product.sold} Terjual</span>
+                            </div>
+
+                            <div class="bg-orange-50 p-4 rounded-lg border border-orange-100 mb-4">
+                                <span class="text-xs text-gray-500 block mb-1">Harga Produk</span>
+                                <span class="text-2xl font-black text-shopee">Rp ${product.price.toLocaleString('id-ID')}</span>
+                            </div>
+
+                            <p class="text-xs text-gray-600 leading-relaxed">${product.description}</p>
+                        </div>
+
+                        <div class="pt-4 border-t flex gap-3">
+                            <button onclick="addToCart(${product.id})" class="flex-1 bg-orange-100 hover:bg-orange-200 text-shopee border border-shopee font-bold py-2.5 rounded text-xs flex items-center justify-center gap-2 transition">
+                                <i class="fa-solid fa-cart-plus"></i> Tambah Keranjang
+                            </button>
+                            <button onclick="buyNowDirect(${product.id})" class="flex-1 bg-shopee hover:bg-shopee-dark text-white font-bold py-2.5 rounded text-xs uppercase shadow transition">
+                                Beli Sekarang
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showView('product-detail');
+        }
+
+        /* ==========================================================================
+           5. CART & CHECKOUT WITH DANA / COD / WHATSAPP INTEGRATION
+           ========================================================================== */
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+
+            saveCart();
+            showToast(`"${product.title}" ditambahkan ke keranjang!`, "success");
+        }
+
+        function buyNowDirect(productId) {
+            addToCart(productId);
+            navigateTo('cart');
+        }
+
+        function saveCart() {
+            localStorage.setItem('animal_artbook_cart', JSON.stringify(cart));
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+            document.getElementById('cart-badge').innerText = totalQty;
+        }
+
+        function renderCart() {
+            const listContainer = document.getElementById('cart-items-list');
+            if (cart.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="text-center py-10 text-gray-400 space-y-2">
+                        <i class="fa-solid fa-cart-flatbed text-4xl"></i>
+                        <p class="text-sm">Keranjang Anda masih kosong.</p>
+                        <button onclick="navigateTo('home')" class="bg-shopee text-white px-4 py-1.5 rounded text-xs font-bold mt-2">Mulai Belanja</button>
+                    </div>
+                `;
+                updateCartTotals();
+                return;
+            }
+
+            listContainer.innerHTML = cart.map((item, index) => `
+                <div class="flex items-center justify-between gap-3 border-b border-gray-100 pb-3">
+                    <img src="${item.image}" class="w-16 h-16 rounded object-cover border flex-shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-xs font-bold text-gray-800 truncate">${item.title}</h4>
+                        <span class="text-[10px] text-gray-500">${item.category}</span>
+                        <div class="text-shopee font-bold text-xs mt-1">Rp ${item.price.toLocaleString('id-ID')}</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center border rounded">
+                            <button onclick="updateCartQty(${index}, -1)" class="px-2 py-0.5 text-xs text-gray-600 hover:bg-gray-100">-</button>
+                            <span class="px-2 text-xs font-semibold">${item.qty}</span>
+                            <button onclick="updateCartQty(${index}, 1)" class="px-2 py-0.5 text-xs text-gray-600 hover:bg-gray-100">+</button>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700 text-xs p-1">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            updateCartTotals();
+            toggleCodAddress(document.querySelector('input[name="pay-method"]:checked').value === 'COD');
+        }
+
+        function updateCartQty(index, change) {
+            cart[index].qty += change;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            saveCart();
+            renderCart();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveCart();
+            renderCart();
+        }
+
+        function updateCartTotals() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            document.getElementById('cart-subtotal').innerText = `Rp ${subtotal.toLocaleString('id-ID')}`;
+            document.getElementById('cart-total').innerText = `Rp ${subtotal.toLocaleString('id-ID')}`;
+        }
+
+        function toggleCodAddress(isCod) {
+            const notes = document.getElementById('cod-notes');
+            if (isCod) {
+                notes.classList.remove('hidden');
+                document.getElementById('cod-address-display').innerText = currentUser ? currentUser.address : "Alamat belum diatur";
+            } else {
+                notes.classList.add('hidden');
+            }
+        }
+
+        function processCheckout() {
+            if (cart.length === 0) {
+                showToast("Keranjang Anda kosong!", "error");
+                return;
+            }
+
+            const method = document.querySelector('input[name="pay-method"]:checked').value;
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            // Format WhatsApp Message
+            let itemsText = cart.map(i => `- ${i.title} (${i.qty}x) = Rp ${(i.price * i.qty).toLocaleString('id-ID')}`).join('%0A');
+            
+            let message = `*PESANAN BARU ANIMAL ARTBOOK*%0A` +
+                          `----------------------------------%0A` +
+                          `*Nama Pembeli:* ${currentUser.fullname || currentUser.username}%0A` +
+                          `*Nomor HP:* ${currentUser.phone || 'Belum Diisi'}%0A` +
+                          `*Alamat COD/Kirim:* ${currentUser.address || 'Belum Diisi'}%0A` +
+                          `----------------------------------%0A` +
+                          `*Daftar Buku Gambar:*%0A${itemsText}%0A` +
+                          `----------------------------------%0A` +
+                          `*Total Pembayaran:* Rp ${total.toLocaleString('id-ID')}%0A` +
+                          `*Metode Pembayaran:* ${method} (Nomor DANA/WA Admin: ${DANA_NUMBER})%0A` +
+                          `----------------------------------%0A` +
+                          `Mohon diproses untuk pengiriman file buku gambar. Terima Kasih!`;
+
+            // Clear cart & notify
+            cart = [];
+            saveCart();
+
+            notifications.unshift({
+                id: Date.now(),
+                title: `Pesanan (${method}) Berhasil Dibuat`,
+                body: `Total Rp ${total.toLocaleString('id-ID')}. Silakan konfirmasi ke WhatsApp Admin.`,
+                time: "Baru saja"
+            });
+            localStorage.setItem('animal_artbook_notifs', JSON.stringify(notifications));
+
+            showToast("Pesanan berhasil dikonfirmasi! Mengalihkan ke WhatsApp...", "success");
+
+            // Open WhatsApp direct link
+            setTimeout(() => {
+                window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+                navigateTo('notifications');
+            }, 1200);
+        }
+
+        /* ==========================================================================
+           6. NOTIFICATIONS & ACCOUNT USER VIEW
+           ========================================================================== */
+        function renderNotifications() {
+            const list = document.getElementById('notif-list');
+            document.getElementById('notif-badge').innerText = notifications.length;
+
+            if (notifications.length === 0) {
+                list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">Belum ada notifikasi.</p>`;
+                return;
+            }
+
+            list.innerHTML = notifications.map(n => `
+                <div class="p-3 bg-orange-50/60 rounded border border-orange-100 flex items-start gap-3">
+                    <div class="p-2 bg-shopee text-white rounded-full text-xs">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xs font-bold text-gray-800">${n.title}</h4>
+                            <span class="text-[10px] text-gray-400">${n.time}</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1">${n.body}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAccount() {
+            if (!currentUser) return;
+
+            document.getElementById('profile-name').innerText = currentUser.fullname || currentUser.username;
+            document.getElementById('profile-username').innerText = `@${currentUser.username}`;
+            document.getElementById('user-avatar').src = currentUser.avatar || 'https://placehold.co/120';
+
+            document.getElementById('profile-ttl').innerText = `${currentUser.pob || '-'}, ${currentUser.dob || '-'}`;
+            document.getElementById('profile-phone').innerText = currentUser.phone || '-';
+            document.getElementById('profile-address').innerText = currentUser.address || '-';
+        }
+
+        function openChatAdmin() {
+            const msg = encodeURIComponent(`Halo Admin Animal Artbook (081371236782), saya ingin bertanya mengenai katalog buku gambar.`);
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+        }
+
+        /* ==========================================================================
+           7. ADMIN DASHBOARD SYSTEM
+           ========================================================================== */
+        function renderAdminDashboard() {
+            // Render Products Table
+            const prodTable = document.getElementById('admin-product-table');
+            prodTable.innerHTML = products.map((p, idx) => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-2">
+                        <img src="${p.image}" class="w-10 h-10 object-cover rounded border">
+                    </td>
+                    <td class="p-2 font-semibold text-gray-800">${p.title}</td>
+                    <td class="p-2"><span class="bg-gray-100 px-2 py-0.5 rounded text-[10px]">${p.category}</span></td>
+                    <td class="p-2 text-shopee font-bold">Rp ${p.price.toLocaleString('id-ID')}</td>
+                    <td class="p-2 text-right">
+                        <button onclick="deleteProduct(${p.id})" class="text-red-500 hover:text-red-700">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Render Orders / Buyers Table
+            const ordersTable = document.getElementById('admin-orders-table');
+            ordersTable.innerHTML = `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-2 font-bold">${currentUser ? currentUser.fullname || currentUser.username : 'Budi Santoso'}</td>
+                    <td class="p-2">${currentUser ? currentUser.phone || '081371236782' : '081234567890'}</td>
+                    <td class="p-2">${currentUser ? currentUser.address || 'Jl. Melati No. 12' : 'Jl. Merdeka No. 45'}</td>
+                    <td class="p-2"><span class="bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded text-[10px]">Lunas (DANA)</span></td>
+                </tr>
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-2 font-bold">Siti Aminah</td>
+                    <td class="p-2">081371236782</td>
+                    <td class="p-2">Lokasi COD: Komplek Indah Blok B</td>
+                    <td class="p-2"><span class="bg-yellow-100 text-yellow-700 font-bold px-2 py-0.5 rounded text-[10px]">Menunggu COD</span></td>
+                </tr>
+            `;
+
+            document.getElementById('admin-total-products').innerText = `${products.length} Buku`;
+            document.getElementById('admin-total-users').innerText = `${registeredUsers.length + 1} Konsumen`;
+        }
+
+        function handleAdminAddProduct(e) {
+            e.preventDefault();
+            const title = document.getElementById('add-prod-title').value;
+            const category = document.getElementById('add-prod-category').value;
+            const price = parseInt(document.getElementById('add-prod-price').value);
+            const imageInput = document.getElementById('add-prod-image').value;
+            const desc = document.getElementById('add-prod-desc').value;
+
+            const newProduct = {
+                id: Date.now(),
+                title,
+                category,
+                price,
+                rating: 5.0,
+                sold: 0,
+                image: imageInput || `https://placehold.co/400x400/EE4D2D/ffffff?text=${encodeURIComponent(title)}`,
+                description: desc || "Buku gambar kualitas tinggi dari seri Animal Artbook."
+            };
+
+            products.unshift(newProduct);
+            localStorage.setItem('animal_artbook_products', JSON.stringify(products));
+
+            showToast("Produk berhasil ditambahkan ke katalog!", "success");
+            e.target.reset();
+            renderAdminDashboard();
+        }
+
+        function deleteProduct(id) {
+            products = products.filter(p => p.id !== id);
+            localStorage.setItem('animal_artbook_products', JSON.stringify(products));
+            showToast("Produk berhasil dihapus dari katalog.", "info");
+            renderAdminDashboard();
+        }
+
+        /* ==========================================================================
+           8. APPLICATION INIT
+           ========================================================================== */
+        window.onload = function() {
+            if (!currentUser) {
+                renderAuthPage('login');
+                showView('auth');
+            } else if (!currentUser.isProfileComplete) {
+                showView('profile-setup');
+            } else {
+                navigateTo('home');
+            }
+            updateCartBadge();
+        };
+    </script>
+</body>
+</html>
